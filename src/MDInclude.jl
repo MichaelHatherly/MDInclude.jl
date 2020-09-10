@@ -13,7 +13,7 @@ export @mdinclude, mdinclude, markdown, isvalid, source, expression, setmodule, 
 """
     @mdinclude(path, [config])
 
-Include the given `path` the current module. An configuration object may be
+Include the given `path` in the current module. A configuration object may be
 passed as well to control the behaviour of the file inclusion.
 """
 macro mdinclude(args...)
@@ -35,9 +35,7 @@ function mdinclude(m::Module, path::AbstractString, config=nothing)
             newm = setmodule(config, node, m)
             ans = capture(config) do
                 _include_string(newm, source(config, node), path, prev) do expr
-                    expression(config, _walk(expr) do x
-                        fixline(x, line)
-                    end)
+                    expression(config, _walk(x -> fixline(x, line), expr))
                 end
             end
         end
@@ -59,7 +57,7 @@ markdown(config, path) = open(Parser(), path)
     valid = isvalid(config, node)
 
 Checks whether the `node` should be `included` in the file's source code or
-not. `node` is a `CommonMark.Node` type. Returns either `true` or `false`.
+not. Returns either `true` or `false`.
 """
 isvalid(config, node) = node.t isa CommonMark.CodeBlock && node.t.info == "julia"
 
@@ -74,7 +72,7 @@ source(config, node) = node.literal
 """
     ex = expression(config, ex)
 
-Returns the expression parsed by the Julia parser prior to being evaluated into
+Returns the expression parsed by the Julia parser prior to being evaluated in
 the module.
 """
 expression(config, ex) = ex
@@ -113,7 +111,11 @@ function _include_string(mapexpr, m, txt, path, prev)
     tls = task_local_storage()
     tls[:SOURCE_PATH] = path
     try
-        include_string(mapexpr, m, txt, path)
+        @static if VERSION < v"1.5"
+            Core.eval(m, mapexpr(Base.parse_input_line(txt; filename=path)))
+        else
+            include_string(mapexpr, m, txt, path)
+        end
     finally
         prev ≡ nothing ? delete!(tls, :SOURCE_PATH) : tls[:SOURCE_PATH] = prev
     end
