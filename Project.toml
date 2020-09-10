@@ -1,0 +1,11 @@
+name = "MDInclude"
+uuid = "90d73f82-b7c3-43a4-ac2d-0ceedb790db1"
+authors = ["Michael Hatherly <michaelhatherly@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+CommonMark = "a80b9123-70ca-4bc0-993e-6e3bcb318db6"
+
+[compat]
+CommonMark = "0.6"
+julia = "1"
