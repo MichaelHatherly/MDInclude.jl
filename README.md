@@ -1,8 +1,5 @@
 # MDInclude
 
-[![Build Status](https://travis-ci.org/MichaelHatherly/MDInclude.jl.svg?branch=master)](https://travis-ci.org/MichaelHatherly/MDInclude.jl)
-[![Codecov](https://codecov.io/gh/MichaelHatherly/MDInclude.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/MichaelHatherly/MDInclude.jl)
-
 `include` your markdown files as if they were Julia source files. This package
 was inspired by the similar package for Jupyter notebooks called
 [NBInclude.jl](https://github.com/stevengj/NBInclude.jl).
